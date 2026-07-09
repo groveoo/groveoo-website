@@ -4,3 +4,6 @@
 live_home.html
 fetched_index.html
 __pycache__/
+venv/
+*.py
+*.sh
