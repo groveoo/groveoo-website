@@ -2,23 +2,21 @@
 <html>
 <head>
 
-
 <meta charset="UTF-8">
 <title>Groveoo Media</title>
 <meta http-equiv="refresh" content="0; url=/">
 <script>window.location.href = '/';</script>
 <style id="groveoo-visibility-fallback">
-/* Fallback: force all Framer animated elements visible after 4s if React stalls */
+/* Fallback: force all Framer animated elements visible since React is disabled */
 @keyframes groveoo-appear {
     from { opacity: 1; visibility: visible; }
     to   { opacity: 1; visibility: visible; }
 }
 [data-framer-appear-id] {
-    animation: groveoo-appear 0.01s linear 4s both;
+    animation: groveoo-appear 0.01s linear 0s both !important;
 }
 /* Fix inline opacity:0.001 that never gets animated away */
 body {
-    /* Framer's default dark bg so no flash */
     background: rgb(6,6,6);
 }
 </style>
@@ -47,8 +45,8 @@ body {
         ['Delivering intelligent systems.', 'Delivering simple, scalable solutions that move businesses forward.'],
         
         // Mission body
-        ['With a relentless focus on precision and performance, we've built a foundation', 
-         'With deep hands-on expertise, we've built a strong foundation of knowledge, skill, and trust in our industry. Over time, we've adapted to evolving trends, embraced new technologies, and consistently delivered solutions that move businesses forward.'],
+        ['With a relentless focus on precision and performance, we\'ve built a foundation', 
+         'With deep hands-on expertise, we\'ve built a strong foundation of knowledge, skill, and trust in our industry. Over time, we\'ve adapted to evolving trends, embraced new technologies, and consistently delivered solutions that move businesses forward.'],
         
         // Team
         ['Alex Chen', 'Het Soni'],
