@@ -1,0 +1,311 @@
+/* =============================================
+   ARMORY AI AGENCY — GLOBAL STYLES (10/10)
+   ============================================= */
+
+/* ─── FONTS ────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Gasoek+One&family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ─── DESIGN TOKENS ──────────────────────── */
+:root {
+  --clr-muted-2:     #ffffff80;
+
+  /* ── ACCENT ── */
+  --clr-accent:      #0099ff;   /* --framer-link-text-color:#09f — cyan-blue */
+  --clr-accent-dim:  rgba(0,153,255,0.12);
+  --clr-accent-glow: rgba(0,153,255,0.22);
+
+  /* ── TYPOGRAPHY (Inter Display + Inter family) ── */
+  --font-display:    'Inter Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:       'Geist Mono', 'IBM Plex Mono', 'Fragment Mono', monospace;
+  --font-editorial:  'PP Editorial New', 'Georgia', 'Times New Roman', serif;
+  --font-manrope:    'Manrope', 'Inter', sans-serif;
+
+  /* ── TYPOGRAPHY SCALE (real values from source) ── */
+  --type-h1-desktop: 100px;
+  --type-h1-tablet:  80px;
+  --type-h4-desktop: 34px;
+  --type-h4-tablet:  27px;
+  --type-h4-mobile:  22px;
+  --type-tracking:   -0.03em;
+
+  /* ── SPACING ── */
+  --spacing-xs:   4px;
+  --spacing-sm:   8px;
+  --spacing-md:   16px;
+  --spacing-lg:   24px;
+  --spacing-xl:   40px;
+  --spacing-2xl:  64px;
+  --spacing-3xl:  96px;
+  --spacing-4xl:  128px;
+  --section-pad:  170px;       /* real section padding from source */
+
+  /* ── LAYOUT ── */
+  --max-width:      1200px;
+  --content-width:  860px;     /* real content max-width from source */
+  --nav-height:     72px;
+  --chat-widget-w:  250px;     /* fixed bottom-right CTA widget */
+
+  /* ── RADII ── */
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+
+  /* ── BREAKPOINTS (EXACT from source) ── */
+  /* Desktop: min-width: 1200px */
+  /* Tablet:  810px – 1199.98px */
+  /* Mobile:  max-width: 809.98px */
+
+  /* ── TRANSITIONS ── */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snappy:cubic-bezier(0.25, 0, 0.3, 1);
+  --t-fast:     0.18s;
+  --t-med:      0.32s;
+  --t-slow:     0.6s;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  background-color: var(--clr-bg);
+  color: var(--clr-white);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img, video, svg { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+button { background: none; border: none; cursor: pointer; font: inherit; color: inherit; }
+input, textarea, select { font: inherit; }
+
+/* --- Google Fonts Import (Inter + Inter Display + Manrope + Geist Mono) --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,700;1,14..32,400&family=Inter+Display:ital,opsz,wght@0,32..144,200;0,32..144,300;0,32..144,400;0,32..144,500;0,32..144,700;1,32..144,400&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=manrope@300,400,500,600&display=swap');
+
+/* --- Container --- */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: 48px;
+}
+@media (max-width: 809px) { .container { padding-inline: 24px; } }
+@media (min-width: 810px) and (max-width: 1199px) { .container { padding-inline: 36px; } }
+
+/* --- Section Shared --- */
+section { position: relative; overflow: hidden; }
+.section-pad {
+  padding-top: var(--section-pad);
+  padding-bottom: var(--section-pad);
+}
+@media (max-width: 1199px) { .section-pad { padding-top: 80px; padding-bottom: 80px; } }
+@media (max-width: 809px) { .section-pad { padding-top: 60px; padding-bottom: 60px; } }
+
+/* --- Section Header --- */
+.section-header { margin-bottom: 64px; }
+.section-header.center { text-align: center; }
+.section-header.center .section-desc { margin-inline: auto; }
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--clr-text-50);
+  margin-bottom: 20px;
+}
+.section-eyebrow::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--clr-text-50);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: var(--type-tracking);
+  line-height: 1.05;
+  color: var(--clr-white);
+  margin-bottom: 20px;
+}
+.section-title em {
+  font-style: italic;
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  color: var(--clr-text-85);
+}
+.section-title-xl { font-size: clamp(2.2rem, 5vw, 64px); }
+.section-title-lg { font-size: clamp(1.8rem, 4vw, 48px); }
+.section-title-md { font-size: clamp(1.4rem, 3vw, 36px); }
+
+.section-desc {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--clr-text-65);
+  max-width: 560px;
+  line-height: 1.7;
+}
+@media (max-width: 809px) { .section-desc { font-size: 16px; } }
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition:
+    background var(--t-fast) var(--ease-out),
+    border-color var(--t-fast),
+    transform var(--t-fast) var(--ease-out),
+    box-shadow var(--t-fast) var(--ease-out),
+    color var(--t-fast);
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--clr-white);
+  color: var(--clr-bg);
+  border: 1px solid var(--clr-white);
+}
+.btn-primary:hover {
+  background: var(--clr-text-85);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px rgba(255,255,255,0.15);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--clr-white);
+  border: 1px solid var(--clr-border-2);
+}
+.btn-secondary:hover {
+  border-color: rgba(255,255,255,0.35);
+  background: var(--clr-bg-card);
+  transform: translateY(-1px);
+}
+.btn-accent {
+  background: var(--clr-accent);
+  color: #fff;
+  border: 1px solid var(--clr-accent);
+}
+.btn-accent:hover {
+  background: #007dd1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px var(--clr-accent-glow);
+}
+.btn-sm { padding: 10px 18px; font-size: 14px; }
+.btn-lg { padding: 18px 32px; font-size: 16px; }
+
+.btn-arrow {
+  display: inline-block;
+  transition: transform var(--t-fast) var(--ease-out);
+}
+.btn:hover .btn-arrow { transform: translateX(3px); }
+
+/* Light-section button variants */
+.btn-dark {
+  background: var(--clr-bg);
+  color: var(--clr-white);
+  border: 1px solid transparent;
+}
+.btn-dark:hover { background: var(--clr-bg-3); }
+.btn-dark-outline {
+  background: transparent;
+  color: var(--clr-bg);
+  border: 1px solid #0606060f;
+}
+.btn-dark-outline:hover { border-color: #06060630; background: #0606060a; }
+
+/* --- Tags / Chips --- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--clr-text-50);
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+/* --- Dividers --- */
+.divider { width: 100%; height: 1px; background: var(--clr-border); }
+.divider-dark { background: #0606060f; }
+
+/* --- Scroll Reveal --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.65s var(--ease-out),
+    transform 0.65s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 80ms; }
+.reveal-delay-2 { transition-delay: 160ms; }
+.reveal-delay-3 { transition-delay: 240ms; }
+.reveal-delay-4 { transition-delay: 320ms; }
+.reveal-delay-5 { transition-delay: 400ms; }
+
+/* --- Selection --- */
+::selection { background: var(--clr-accent); color: #fff; }
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--clr-bg); }
+::-webkit-scrollbar-thumb { background: #ffffff20; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #ffffff35; }
+
+/* ─── FRAMER-LIKE MOTION GRAPHICS ───────── */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 153, 255, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 153, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 153, 255, 0); }
+}
+
+@keyframes floatElement {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.mockup-node.accent {
+  animation: pulseGlow 2s infinite;
+}
+
+.product-img {
+  animation: floatElement 6s ease-in-out infinite;
+}

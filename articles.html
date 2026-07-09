@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script id="groveoo-fix">
+(function() {
+    // Override IntersectionObserver so appear animations fire immediately
+    var NIO = window.IntersectionObserver;
+    window.IntersectionObserver = function(cb, opts) {
+        var io = new NIO(cb, opts);
+        var orig = io.observe.bind(io);
+        io.observe = function(el) {
+            try { cb([{isIntersecting:true,intersectionRatio:1,target:el,boundingClientRect:{},intersectionRect:{},rootBounds:null,time:0}],io); } catch(e) {}
+            return orig(el);
+        };
+        return io;
+    };
+    window.IntersectionObserver.prototype = NIO.prototype;
+
+    // After 1s, force all Framer animated elements visible via JS
+    // (covers elements set invisible by React after hydration)
+    function forceVisible() {
+        document.querySelectorAll('[data-framer-appear-id]').forEach(function(el) {
+            el.style.setProperty('opacity', '1', 'important');
+            el.style.setProperty('visibility', 'visible', 'important');
+            el.style.setProperty('transform', 'none', 'important');
+        });
+        // Also fix any element with opacity 0.001 inline style
+        document.querySelectorAll('[style*="opacity:0.001"],[style*="opacity: 0.001"]').forEach(function(el) {
+            el.style.setProperty('opacity', '1', 'important');
+        });
+    }
+    // Run at multiple intervals
+    [100, 500, 1000, 2000, 3000].forEach(function(t) { setTimeout(forceVisible, t); });
+})();
+</script>
+<style id="groveoo-fix-css">
+[data-framer-appear-id]{opacity:1!important;visibility:visible!important;transform:none!important}
+[style*="opacity:0.001"],[style*="opacity: 0.001"]{opacity:1!important}
+</style>
+
+<meta charset="UTF-8">
+<title>Groveoo Media</title>
+<meta http-equiv="refresh" content="0; url=/">
+<script>window.location.href = '/';</script>
+
+</head>
+<body>
+<script id="groveoo-about-contact">try {
+
+// Groveoo About & Contact page runtime DOM replacements
+(function() {
+    var textReplacements = [
+        // About page - eyebrow / headline
+        ['Passion meets intelligence', 'Passion meets purpose'],
+        ['Where intelligence meets ambition', 'Passion meets purpose'],
+        ['passion meets intelligence', 'Passion meets purpose'],
+        
+        // About headline
+        ['Groveoo is defining the future of AI infrastructure.', 'Groveoo Media is defining the future landscape of business.'],
+        ['Groveoo is defining the future of artificial intelligence.', 'Groveoo Media is defining the future landscape of business.'],
+        
+        // About body copy
+        ['In a rapidly evolving AI landscape, Groveoo stands at the forefront of innovation', 
+         'In a rapidly evolving digital world, Groveoo Media stands at the forefront of innovation, transforming how businesses operate, connect, and grow. By delivering intelligent, scalable, and user-focused Digital Web Solutions'],
+        
+        // Mission
+        ['Delivering intelligent systems that scale.', 'Delivering simple, scalable solutions that move businesses forward.'],
+        ['Delivering intelligent systems.', 'Delivering simple, scalable solutions that move businesses forward.'],
+        
+        // Mission body
+        ['With a relentless focus on precision and performance, we've built a foundation', 
+         'With deep hands-on expertise, we've built a strong foundation of knowledge, skill, and trust in our industry. Over time, we've adapted to evolving trends, embraced new technologies, and consistently delivered solutions that move businesses forward.'],
+        
+        // Team
+        ['Alex Chen', 'Het Soni'],
+        ['Sarah Nakamura', 'Dev Patel'],
+        ['James Okafor', 'Harnil Kadia'],
+        ['Chief Executive Officer', 'Founder & Director'],
+        ['Head of Research', 'Co-Founder'],
+        ['Chief Technology Officer', 'Tech Head & CTO'],
+        
+        // Contact page
+        ['Got something on your mind?', 'We will ask the right questions, discuss possibilities and make an action plan.'],
+        ['We'd love to hear from you. Fill out the form and we'll be in touch.', 
+         'Based in Toronto, Canada — available globally for projects of all sizes.'],
+        ['Austin, TX, USA', 'Toronto, Canada'],
+        ['Austin, Texas', 'Toronto, Canada'],
+        ['Your message was sent.', 'Your message has been received.'],
+        ['Message sent!', 'Your message has been received.'],
+        ['hello@armory.ai', 'hey@groveoo.com'],
+        ['+1 (555) 123-4567', '+1 (647) 561-2726'],
+        
+        // Stats on about page
+        ['12 Projects deployed', '100% Projects completed'],
+        ['10x Efficiency increase', '03 Team members'],
+        ['99% Uptime guarantee', '32 Satisfied clients'],
+        
+        // Paraphrase pass — remaining neural/AI terms
+        ['neural agents', 'web applications'],
+        ['neural ecosystems', 'digital ecosystems'],
+        ['neural logic', 'application logic'],
+        ['neural pipeline', 'development pipeline'],
+        ['enterprise AI', 'enterprise web'],
+        ['AI-powered', 'technology-powered'],
+        ['edge nodes', 'cloud nodes'],
+    ];
+
+    function applyTextReplacements(root) {
+        var walker = document.createTreeWalker(
+            root || document.body,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+        );
+        var node;
+        while ((node = walker.nextNode())) {
+            var original = node.nodeValue;
+            if (!original || !original.trim()) continue;
+            for (var i = 0; i < textReplacements.length; i++) {
+                var from = textReplacements[i][0];
+                var to = textReplacements[i][1];
+                if (original.includes(from)) {
+                    node.nodeValue = original.split(from).join(to);
+                    original = node.nodeValue;
+                }
+            }
+        }
+    }
+
+    // Also swap href for team photos if they point to old Armory paths
+    function fixTeamPhotos() {
+        document.querySelectorAll('img').forEach(function(img) {
+            var src = img.src || '';
+            // Armory team photo IDs — replace with placeholder paths
+            if (src.includes('EuYy1gxty3AwWpl483SuuAIylY')) {
+                img.src = './images/savangroveoo.png';
+                img.srcset = '';
+            } else if (src.includes('2gYwQgOmBPtREHpUtFPcitrFhI')) {
+                img.src = './images/henygroveoo.png';
+                img.srcset = '';
+            }
+            // Flag missing team photos by using a placeholder
+            var alt = (img.alt || '').toLowerCase();
+            if ((alt.includes('alex') || alt.includes('chen')) && !img.dataset.r2fixed) {
+                img.dataset.r2fixed = '1';
+                img.alt = 'Het Soni - Founder & Director';
+                img.title = 'Het Soni - Founder & Director (photo pending)';
+            }
+            if ((alt.includes('sarah') || alt.includes('nakamura')) && !img.dataset.r2fixed) {
+                img.dataset.r2fixed = '1';
+                img.alt = 'Dev Patel - Co-Founder';
+                img.title = 'Dev Patel - Co-Founder (photo pending)';
+            }
+            if ((alt.includes('james') || alt.includes('okafor')) && !img.dataset.r2fixed) {
+                img.dataset.r2fixed = '1';
+                img.alt = 'Harnil Kadia - Tech Head & CTO';
+                img.title = 'Harnil Kadia - Tech Head & CTO (photo pending)';
+            }
+        });
+    }
+
+    function runAll() {
+        applyTextReplacements();
+        fixTeamPhotos();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runAll);
+    } else {
+        runAll();
+    }
+
+    // Watch for Framer hydration
+    var obs = new MutationObserver(function() { runAll(); });
+    obs.observe(document.body || document.documentElement, { childList: true, subtree: true });
+})();
+
+} catch(e) { console.warn("Groveoo script error:", e); }</script>
+
+
+<script id="groveoo-team-photos">try {
+
+(function() {
+    var map = [
+        { ids: ['EuYy1gxty3AwWpl483SuuAIylY','alex','chen'], src: './images/het-soni-groveoo.jpg', alt: 'Het Soni - Founder & Director' },
+        { ids: ['2gYwQgOmBPtREHpUtFPcitrFhI','sarah','nakamura'], src: './images/dev-patel-groveoo.jpg', alt: 'Dev Patel - Co-Founder' },
+        { ids: ['james','okafor'], src: './images/harnil-kadia-groveoo.jpg', alt: 'Harnil Kadia - CTO' },
+    ];
+    function patch() {
+        document.querySelectorAll('img:not([data-r2team])').forEach(function(img) {
+            var s = (img.src||'').toLowerCase(), a = (img.alt||'').toLowerCase();
+            for (var i=0;i<map.length;i++) {
+                if (map[i].ids.some(function(id){ return s.includes(id)||a.includes(id); })) {
+                    img.dataset.r2team='1'; img.src=map[i].src; img.srcset=''; img.alt=map[i].alt; break;
+                }
+            }
+        });
+    }
+    document.readyState==='loading'?document.addEventListener('DOMContentLoaded',patch):patch();
+    new MutationObserver(patch).observe(document.documentElement,{childList:true,subtree:true});
+})();
+
+} catch(e) { console.warn("Groveoo script error:", e); }</script>
+</body>
+</html>

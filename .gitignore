@@ -1,0 +1,6 @@
+*.py
+*.sh
+*.log
+live_home.html
+fetched_index.html
+__pycache__/
