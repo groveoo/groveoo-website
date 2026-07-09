@@ -1,52 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script id="groveoo-fix">
+<script id="groveoo-fetch-interceptor">
+// Intercept Framer CMS fetch calls to prevent "something went wrong" on localhost
 (function() {
-    // Override IntersectionObserver so appear animations fire immediately
-    var NIO = window.IntersectionObserver;
-    window.IntersectionObserver = function(cb, opts) {
-        var io = new NIO(cb, opts);
-        var orig = io.observe.bind(io);
-        io.observe = function(el) {
-            try { cb([{isIntersecting:true,intersectionRatio:1,target:el,boundingClientRect:{},intersectionRect:{},rootBounds:null,time:0}],io); } catch(e) {}
-            return orig(el);
-        };
-        return io;
+    var _fetch = window.fetch;
+    window.fetch = function() {
+        var url = (typeof arguments[0] === 'string') ? arguments[0] : (arguments[0] && arguments[0].url) || '';
+        // Block Framer CMS/search API calls that fail on localhost
+        if (url && (
+            url.indexOf('framerusercontent.com/api') !== -1 ||
+            url.indexOf('framerusercontent.com/sites') !== -1 && url.indexOf('searchIndex') !== -1
+        )) {
+            return Promise.resolve(new Response(JSON.stringify([]), {
+                status: 200,
+                headers: {'Content-Type': 'application/json'}
+            }));
+        }
+        return _fetch.apply(this, arguments);
     };
-    window.IntersectionObserver.prototype = NIO.prototype;
-
-    // After 1s, force all Framer animated elements visible via JS
-    // (covers elements set invisible by React after hydration)
-    function forceVisible() {
-        document.querySelectorAll('[data-framer-appear-id]').forEach(function(el) {
-            el.style.setProperty('opacity', '1', 'important');
-            el.style.setProperty('visibility', 'visible', 'important');
-            el.style.setProperty('transform', 'none', 'important');
-        });
-        // Also fix any element with opacity 0.001 inline style
-        document.querySelectorAll('[style*="opacity:0.001"],[style*="opacity: 0.001"]').forEach(function(el) {
-            el.style.setProperty('opacity', '1', 'important');
-        });
-    }
-    // Run at multiple intervals
-    [100, 500, 1000, 2000, 3000].forEach(function(t) { setTimeout(forceVisible, t); });
+    // Also intercept XMLHttpRequest
+    var _open = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url) {
+        if (url && url.indexOf('framerusercontent.com/api') !== -1) {
+            this._blocked = true;
+        }
+        return _open.apply(this, arguments);
+    };
+    var _send = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function() {
+        if (this._blocked) {
+            setTimeout(function() {
+                Object.defineProperty(this, 'status', { value: 200 });
+                Object.defineProperty(this, 'responseText', { value: '[]' });
+                this.dispatchEvent(new Event('load'));
+            }.bind(this), 0);
+            return;
+        }
+        return _send.apply(this, arguments);
+    };
 })();
 </script>
-<style id="groveoo-fix-css">
-[data-framer-appear-id]{opacity:1!important;visibility:visible!important;transform:none!important}
-[style*="opacity:0.001"],[style*="opacity: 0.001"]{opacity:1!important}
-</style>
 
 <meta charset="UTF-8">
 <title>Groveoo Media</title>
 <meta http-equiv="refresh" content="0; url=/">
 <script>window.location.href = '/';</script>
+<style id="groveoo-visibility-fallback">
+/* Fallback: force all Framer animated elements visible after 4s if React stalls */
+@keyframes groveoo-appear {
+    from { opacity: 1; visibility: visible; }
+    to   { opacity: 1; visibility: visible; }
+}
+[data-framer-appear-id] {
+    animation: groveoo-appear 0.01s linear 4s both;
+}
+/* Fix inline opacity:0.001 that never gets animated away */
+body {
+    /* Framer's default dark bg so no flash */
+    background: rgb(6,6,6);
+}
+</style>
 
 </head>
 <body>
-<script id="groveoo-about-contact">try {
-
+<script id="groveoo-about-contact">
 // Groveoo About & Contact page runtime DOM replacements
 (function() {
     var textReplacements = [
@@ -174,32 +192,21 @@
     var obs = new MutationObserver(function() { runAll(); });
     obs.observe(document.body || document.documentElement, { childList: true, subtree: true });
 })();
+</script>
 
-} catch(e) { console.warn("Groveoo script error:", e); }</script>
 
-
-<script id="groveoo-team-photos">try {
-
+<script id="groveoo-team-photos">
 (function() {
     var map = [
         { ids: ['EuYy1gxty3AwWpl483SuuAIylY','alex','chen'], src: './images/het-soni-groveoo.jpg', alt: 'Het Soni - Founder & Director' },
         { ids: ['2gYwQgOmBPtREHpUtFPcitrFhI','sarah','nakamura'], src: './images/dev-patel-groveoo.jpg', alt: 'Dev Patel - Co-Founder' },
         { ids: ['james','okafor'], src: './images/harnil-kadia-groveoo.jpg', alt: 'Harnil Kadia - CTO' },
     ];
-    function patch() {
-        document.querySelectorAll('img:not([data-r2team])').forEach(function(img) {
-            var s = (img.src||'').toLowerCase(), a = (img.alt||'').toLowerCase();
-            for (var i=0;i<map.length;i++) {
-                if (map[i].ids.some(function(id){ return s.includes(id)||a.includes(id); })) {
-                    img.dataset.r2team='1'; img.src=map[i].src; img.srcset=''; img.alt=map[i].alt; break;
-                }
-            }
-        });
-    }
+    function patch() { document.querySelectorAll('img:not([data-r2team])').forEach(function(img) { var s=(img.src||'').toLowerCase(),a=(img.alt||'').toLowerCase(); for(var i=0;i<map.length;i++){ if(map[i].ids.some(function(id){return s.includes(id)||a.includes(id);})){img.dataset.r2team='1';img.src=map[i].src;img.srcset='';img.alt=map[i].alt;break;} } }); }
     document.readyState==='loading'?document.addEventListener('DOMContentLoaded',patch):patch();
     new MutationObserver(patch).observe(document.documentElement,{childList:true,subtree:true});
 })();
+</script>
 
-} catch(e) { console.warn("Groveoo script error:", e); }</script>
 </body>
 </html>
